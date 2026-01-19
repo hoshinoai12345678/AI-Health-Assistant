@@ -1,0 +1,400 @@
+# AI大健康助手 - AI编程规则
+
+## 项目概述
+这是一个微信小程序项目，为教师、学生、家长、教育主管部门提供AI驱动的大健康助手服务。
+
+## 核心业务规则
+
+### 1. 二级资源检索架构（最重要！）
+- **一级检索**：优先从内部资源库（课课练、运动会方案、动作库、体测数据）获取答案
+- **二级检索**：内部资源无匹配时，从互联网获取答案
+- **关键原则**：
+  - 内部资源内容不可修改，只能原样返回
+  - 通过关键词识别判断检索路径
+  - 必须标注内容来源
+
+### 2. 内容来源标注规则
+- 内部资源：必须添加 `（内容来自于北京市学校体育联合会）`
+- 互联网资源：必须添加 `（内容来自于互联网，请斟酌使用）`
+
+### 3. 角色识别与适配
+- **教师**：专业术语、校园场景、数据化表达
+- **学生**：口语化、易懂、鼓励性语言
+- **家长**：通俗易懂、实用、关注儿童健康
+- **主管部门**：数据化、专业化、决策支持
+
+### 4. 安全机制（必须实现）
+- **风险提示**：涉及医疗、心理危机问题时，先提示"建议及时就医/联系专业医生"
+- **内容过滤**：非健康相关问题回复"我们是大健康智能体，请问健康相关问题"
+
+## 技术栈规范
+
+### 后端（Python + FastAPI）
+- Python 3.11+
+- FastAPI 0.109+
+- PostgreSQL 15+ (主数据库)
+- Redis 7+ (缓存)
+- MinIO (文件存储)
+- 阿里云通义千问 (LLM)
+
+### 前端（微信小程序）
+- 微信小程序原生开发
+- TypeScript
+- Vant Weapp (UI组件)
+- MobX (状态管理)
+
+## 代码规范
+
+### 通用规范
+1. **单文件不超过200行**（强制）
+2. **必须添加类型提示**（Python用typing，TypeScript用interface/type）
+3. **必须添加注释**（关键逻辑、复杂算法、业务规则）
+4. **命名规范**：
+   - Python: snake_case (函数、变量)，PascalCase (类)
+   - TypeScript: camelCase (函数、变量)，PascalCase (类、接口)
+5. **禁止硬编码**：配置项必须放在配置文件或环境变量中
+
+### Python代码规范
+```python
+# 遵循PEP 8
+# 使用类型提示
+def get_user_by_id(user_id: int) -> Optional[User]:
+    """根据用户ID获取用户信息
+    
+    Args:
+        user_id: 用户ID
+        
+    Returns:
+        User对象，不存在返回None
+    """
+    pass
+
+# 使用异步函数
+async def fetch_data() -> dict:
+    pass
+
+# 错误处理
+try:
+    result = await some_operation()
+except SpecificException as e:
+    logger.error(f"操作失败: {e}")
+    raise
+```
+
+### TypeScript代码规范
+```typescript
+// 使用接口定义类型
+interface User {
+  id: number;
+  nickname: string;
+  role: 'teacher' | 'student' | 'parent' | 'admin';
+}
+
+// 使用async/await
+async function fetchUserData(userId: number): Promise<User> {
+  try {
+    const res = await request.get(`/api/users/${userId}`);
+    return res.data;
+  } catch (error) {
+    console.error('获取用户数据失败:', error);
+    throw error;
+  }
+}
+```
+
+## 项目结构规范
+
+### 后端目录结构
+```
+backend/
+├── app/
+│   ├── api/          # API路由（按功能模块划分）
+│   ├── models/       # 数据模型（SQLAlchemy）
+│   ├── services/     # 业务逻辑（核心服务）
+│   ├── core/         # 核心配置（config, database, security）
+│   └── utils/        # 工具函数
+```
+
+### 前端目录结构
+```
+miniprogram/
+├── pages/            # 页面
+├── components/       # 组件
+├── utils/            # 工具函数
+└── services/         # API服务
+```
+
+## 数据库设计规范
+
+### 核心表
+- **users**: 用户表（id, openid, role, nickname, avatar）
+- **students**: 学生表（id, user_id, name, grade, class）
+- **fitness_tests**: 体测表（id, student_id, test_date, scores）
+- **conversations**: 对话会话表（id, user_id, title）
+- **messages**: 消息表（id, conversation_id, role, content, source）
+- **internal_resources**: 内部资源表（id, type, category, title, content, keywords）
+
+### 命名规范
+- 表名：复数形式，小写+下划线（users, fitness_tests）
+- 字段名：小写+下划线（user_id, created_at）
+- 主键：统一使用 `id`
+- 外键：`表名_id`（user_id, student_id）
+- 时间戳：created_at, updated_at
+
+## API设计规范
+
+### RESTful规范
+```
+POST   /api/auth/login          # 登录
+GET    /api/users/me            # 获取当前用户
+POST   /api/chat/send           # 发送消息
+GET    /api/conversations       # 获取对话列表
+GET    /api/conversations/:id   # 获取对话详情
+DELETE /api/conversations/:id   # 删除对话
+GET    /api/fitness/tests       # 获取体测数据
+```
+
+### 响应格式
+```json
+// 成功响应
+{
+  "code": 0,
+  "message": "success",
+  "data": { ... }
+}
+
+// 错误响应
+{
+  "code": 1001,
+  "message": "用户不存在",
+  "data": null
+}
+```
+
+## 安全规范
+
+### 认证授权
+- 使用JWT Token（有效期7天）
+- 每个请求必须验证token
+- 基于角色的权限控制（RBAC）
+
+### 数据安全
+- 传输：HTTPS（TLS 1.3）
+- 存储：敏感字段AES-256加密
+- 密码：bcrypt哈希
+
+### 防护措施
+- 限流：每用户每分钟100次请求
+- SQL注入：使用ORM参数化查询
+- XSS防护：输入验证+输出转义
+- CSRF防护：Token验证
+
+## 性能规范
+
+### 响应时间要求
+- AI回应：≤ 3秒
+- API响应：≤ 500ms
+- 页面加载：≤ 2秒
+
+### 缓存策略
+- 热点数据：Redis缓存1小时
+- 用户会话：Redis缓存7天
+- 相同问题：缓存1小时
+
+### 数据库优化
+- 关键字段建立索引
+- 避免N+1查询
+- 使用连接池（20个连接）
+
+## 开发流程规范
+
+### 标准工作流程
+1. 阅读相关文档（memory-bank/目录）
+2. 执行当前步骤
+3. 运行测试验证
+4. 测试通过后提交Git
+5. 更新progress.md记录进度
+6. 更新architecture.md（如有架构变化）
+7. 新建AI对话继续下一步
+
+### Git提交规范
+```
+feat: 添加AI对话功能
+fix: 修复体测数据查询bug
+docs: 更新API文档
+style: 代码格式化
+refactor: 重构资源检索服务
+test: 添加单元测试
+chore: 更新依赖包
+```
+
+### 禁止事项
+- ❌ 跳过测试直接进入下一步
+- ❌ 一次性生成大量代码
+- ❌ 生成单体巨文件（>200行）
+- ❌ 未经确认就重构现有代码
+- ❌ 硬编码配置信息
+- ❌ 忽略错误处理
+
+## 测试规范
+
+### 测试覆盖率
+- 目标：> 80%
+- 核心业务逻辑：100%
+
+### 测试类型
+- 单元测试：pytest
+- 集成测试：pytest + httpx
+- 前端测试：miniprogram-simulate
+
+### 测试示例
+```python
+# 后端测试
+async def test_chat_send():
+    response = await client.post(
+        "/api/chat/send",
+        json={"message": "我想要平衡能力训练"},
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+    assert "平衡" in response.json()["data"]["reply"]
+```
+
+## 日志规范
+
+### 日志级别
+- DEBUG：开发调试信息
+- INFO：正常业务信息
+- WARNING：警告信息
+- ERROR：错误信息
+- CRITICAL：严重错误
+
+### 日志格式
+```python
+logger.info(f"用户 {user_id} 发起对话")
+logger.error(f"AI服务调用失败: {error}", exc_info=True)
+```
+
+## 文档规范
+
+### 必须维护的文档
+- **README.md**: 项目说明、快速开始
+- **progress.md**: 开发进度记录
+- **architecture.md**: 架构设计文档
+- **API文档**: FastAPI自动生成
+
+### 代码注释
+- 每个函数必须有docstring
+- 复杂逻辑必须有行内注释
+- 业务规则必须注释说明
+
+## AI对话提示词模板
+
+### 开始新步骤
+```
+请阅读 memory-bank/ 下的所有文档，特别是：
+- progress.md（了解当前进度）
+- architecture.md（了解现有架构）
+
+然后执行实施计划的第 X.X 步：[步骤名称]。
+
+要求：
+- 遵循已有的代码风格和架构
+- 单文件不超过200行
+- 添加必要的注释和类型提示
+- 我会负责测试验证
+
+请开始执行。
+```
+
+### 调试问题
+```
+遇到以下问题：[问题描述]
+
+相关代码文件：[文件路径]
+错误信息：[错误日志]
+
+请分析问题原因并提供解决方案。
+```
+
+## 关键业务逻辑
+
+### 关键词识别规则
+- **内部资源关键词**：课课练、全员运动会、动作库、体测、成绩
+- **素质类型关键词**：速度、力量、柔韧、耐力、平衡、协调
+- **场景关键词**：教学、训练、方案、视频、教案
+
+### 体测分析逻辑
+1. 获取学生最新体测数据
+2. 计算各项成绩得分
+3. 识别最弱项和次弱项
+4. 映射到身体素质（速度、力量、柔韧等）
+5. 从动作库查找对应训练动作
+6. 生成个性化训练方案
+
+### 风险检测逻辑
+- 医疗关键词：发烧、吃药、疼痛、受伤
+- 心理关键词：自杀、抑郁、焦虑、压力
+- 触发风险提示机制
+
+## 环境配置
+
+### 开发环境
+- Python 3.11+
+- Node.js 18+
+- PostgreSQL 15+
+- Redis 7+
+- 微信开发者工具
+
+### 环境变量
+```bash
+# 数据库
+DATABASE_URL=postgresql://user:pass@localhost:5432/health_db
+REDIS_URL=redis://localhost:6379/0
+
+# AI服务
+DASHSCOPE_API_KEY=your_api_key
+
+# 微信小程序
+WECHAT_APP_ID=your_app_id
+WECHAT_APP_SECRET=your_app_secret
+
+# JWT
+SECRET_KEY=your_secret_key
+```
+
+## 部署规范
+
+### Docker部署
+- 使用docker-compose编排
+- 环境变量通过.env文件管理
+- 数据持久化使用volume
+
+### 生产环境检查清单
+- [ ] 环境变量配置正确
+- [ ] 数据库迁移完成
+- [ ] SSL证书配置
+- [ ] 日志系统正常
+- [ ] 监控系统部署
+- [ ] 备份策略配置
+
+## 参考文档位置
+
+所有核心文档在 `memory-bank/` 目录：
+- **product-requirements.md**: 产品需求文档
+- **tech-stack.md**: 技术栈文档
+- **implementation-plan-phase1.md**: 实施计划第一阶段
+- **implementation-plan-phase2.md**: 实施计划第二阶段
+- **implementation-plan-phase3.md**: 实施计划第三阶段
+- **architecture.md**: 系统架构文档
+- **progress.md**: 项目进度记录
+- **ai-prompts.md**: AI提示词模板
+
+## 联系方式
+
+如有疑问，请查阅文档或联系项目负责人。
+
+---
+
+**最后更新**: 2026-01-19
+**版本**: v1.0

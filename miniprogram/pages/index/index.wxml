@@ -1,0 +1,58 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="title">AI大健康助手</view>
+    <view class="subtitle">您的专属健康管理专家</view>
+  </view>
+
+  <!-- 功能卡片 -->
+  <view class="features">
+    <view class="feature-card" bindtap="goToChat">
+      <view class="feature-icon">💬</view>
+      <view class="feature-title">AI咨询</view>
+      <view class="feature-desc">智能健康问答</view>
+    </view>
+
+    <view class="feature-card">
+      <view class="feature-icon">📋</view>
+      <view class="feature-title">训练方案</view>
+      <view class="feature-desc">个性化训练计划</view>
+    </view>
+
+    <view class="feature-card">
+      <view class="feature-icon">📊</view>
+      <view class="feature-title">体测分析</view>
+      <view class="feature-desc">体测数据分析</view>
+    </view>
+
+    <view class="feature-card">
+      <view class="feature-icon">📚</view>
+      <view class="feature-title">健康知识</view>
+      <view class="feature-desc">运动营养心理</view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="quick-access">
+    <view class="section-title">快捷入口</view>
+    <view class="access-list">
+      <view class="access-item">
+        <text class="access-icon">🏃</text>
+        <text class="access-text">运动指导</text>
+      </view>
+      <view class="access-item">
+        <text class="access-icon">🥗</text>
+        <text class="access-text">营养建议</text>
+      </view>
+      <view class="access-item">
+        <text class="access-icon">💪</text>
+        <text class="access-text">体能训练</text>
+      </view>
+      <view class="access-item">
+        <text class="access-icon">🧘</text>
+        <text class="access-text">心理健康</text>
+      </view>
+    </view>
+  </view>
+</view>

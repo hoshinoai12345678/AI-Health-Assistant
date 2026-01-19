@@ -1,0 +1,39 @@
+<!--pages/chat/chat.wxml-->
+<view class="container">
+  <!-- 消息列表 -->
+  <scroll-view class="message-list" scroll-y scroll-into-view="{{scrollToView}}">
+    <view wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}" class="message-item {{item.role}}">
+      <view class="message-avatar">
+        <text wx:if="{{item.role === 'user'}}">👤</text>
+        <text wx:else>🤖</text>
+      </view>
+      <view class="message-content">
+        <text>{{item.content}}</text>
+        <view wx:if="{{item.source}}" class="message-source">
+          {{item.source === 'internal' ? '来源：北京市学校体育联合会' : '来源：互联网，请斟酌使用'}}
+        </view>
+      </view>
+    </view>
+    
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading">
+      <text>AI正在思考中...</text>
+    </view>
+  </scroll-view>
+
+  <!-- 输入框 -->
+  <view class="input-bar">
+    <input 
+      class="input" 
+      type="text" 
+      placeholder="请输入您的问题..." 
+      value="{{inputText}}"
+      bindinput="onInput"
+      confirm-type="send"
+      bindconfirm="sendMessage"
+    />
+    <button class="send-btn" bindtap="sendMessage" disabled="{{!inputText || loading}}">
+      发送
+    </button>
+  </view>
+</view>

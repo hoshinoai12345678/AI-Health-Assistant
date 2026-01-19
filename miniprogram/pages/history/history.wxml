@@ -1,0 +1,38 @@
+<!--pages/history/history.wxml-->
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{conversations.length === 0}}" class="empty">
+    <text class="empty-icon">📝</text>
+    <text class="empty-text">暂无对话记录</text>
+    <button class="start-btn" bindtap="goToChat">开始对话</button>
+  </view>
+
+  <!-- 对话列表 -->
+  <view wx:else class="conversation-list">
+    <view 
+      wx:for="{{conversations}}" 
+      wx:key="id" 
+      class="conversation-item"
+      bindtap="openConversation"
+      data-id="{{item.id}}"
+    >
+      <view class="conversation-content">
+        <view class="conversation-title">{{item.title}}</view>
+        <view class="conversation-message">{{item.lastMessage}}</view>
+        <view class="conversation-time">{{item.time}}</view>
+      </view>
+      <view 
+        class="delete-btn" 
+        catchtap="deleteConversation"
+        data-id="{{item.id}}"
+      >
+        🗑️
+      </view>
+    </view>
+  </view>
+</view>

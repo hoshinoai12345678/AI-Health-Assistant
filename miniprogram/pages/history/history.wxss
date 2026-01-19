@@ -1,0 +1,95 @@
+/* pages/history/history.wxss */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20rpx;
+}
+
+.loading {
+  text-align: center;
+  padding: 200rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.empty {
+  text-align: center;
+  padding: 200rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  display: block;
+  margin-bottom: 40rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 60rpx;
+}
+
+.start-btn {
+  width: 400rpx;
+  height: 80rpx;
+  background: #1AAD19;
+  color: white;
+  border-radius: 40rpx;
+  font-size: 32rpx;
+  line-height: 80rpx;
+}
+
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.conversation-item {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.conversation-item:active {
+  transform: scale(0.98);
+}
+
+.conversation-content {
+  flex: 1;
+}
+
+.conversation-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-message {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.delete-btn {
+  font-size: 40rpx;
+  padding: 10rpx 20rpx;
+  margin-left: 20rpx;
+}

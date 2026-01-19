@@ -1,0 +1,42 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <!-- 未登录状态 -->
+  <view wx:if="{{!hasLogin}}" class="login-section">
+    <view class="avatar-placeholder">👤</view>
+    <view class="login-tip">登录后享受更多服务</view>
+    <button class="login-btn" bindtap="login">微信登录</button>
+  </view>
+
+  <!-- 已登录状态 -->
+  <view wx:else class="user-section">
+    <image class="avatar" src="{{userInfo.avatar_url}}" />
+    <view class="user-info">
+      <view class="nickname">{{userInfo.nickname}}</view>
+      <view class="role">{{roleText}}</view>
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="menu-list">
+    <view class="menu-item" bindtap="goToHistory">
+      <text class="menu-icon">📝</text>
+      <text class="menu-text">对话历史</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    
+    <view class="menu-item">
+      <text class="menu-icon">⚙️</text>
+      <text class="menu-text">设置</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    
+    <view class="menu-item">
+      <text class="menu-icon">ℹ️</text>
+      <text class="menu-text">关于我们</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <button wx:if="{{hasLogin}}" class="logout-btn" bindtap="logout">退出登录</button>
+</view>
