@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI大健康助手</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 主内容区 -->
+        <div id="main-content">
+            <!-- 首页 -->
+            <div id="page-index" class="page active">
+                <div class="container">
+                    <div class="header">
+                        <div class="title">AI大健康助手</div>
+                        <div class="subtitle">您的专属健康管理专家</div>
+                    </div>
+
+                    <div class="features">
+                        <div class="feature-card" onclick="navigateTo('chat')">
+                            <div class="feature-icon">💬</div>
+                            <div class="feature-title">AI咨询</div>
+                            <div class="feature-desc">智能健康问答</div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">📋</div>
+                            <div class="feature-title">训练方案</div>
+                            <div class="feature-desc">个性化训练计划</div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-title">体测分析</div>
+                            <div class="feature-desc">体测数据分析</div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">📚</div>
+                            <div class="feature-title">健康知识</div>
+                            <div class="feature-desc">运动营养心理</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-access">
+                        <div class="section-title">快捷入口</div>
+                        <div class="access-list">
+                            <div class="access-item">
+                                <span class="access-icon">🏃</span>
+                                <span class="access-text">运动指导</span>
+                            </div>
+                            <div class="access-item">
+                                <span class="access-icon">🥗</span>
+                                <span class="access-text">营养建议</span>
+                            </div>
+                            <div class="access-item">
+                                <span class="access-icon">💪</span>
+                                <span class="access-text">体能训练</span>
+                            </div>
+                            <div class="access-item">
+                                <span class="access-icon">🧘</span>
+                                <span class="access-text">心理健康</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 聊天页 -->
+            <div id="page-chat" class="page">
+                <div class="chat-container">
+                    <div class="message-list" id="messageList"></div>
+                    <div class="input-bar">
+                        <input 
+                            type="text" 
+                            class="input" 
+                            id="chatInput"
+                            placeholder="请输入您的问题..."
+                            onkeypress="handleKeyPress(event)"
+                        />
+                        <button class="send-btn" onclick="sendMessage()">发送</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 历史页 -->
+            <div id="page-history" class="page">
+                <div class="container">
+                    <div id="historyContent">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 个人中心页 -->
+            <div id="page-profile" class="page">
+                <div class="container">
+                    <div id="loginSection" class="login-section">
+                        <div class="avatar-placeholder">👤</div>
+                        <div class="login-tip">登录后享受更多服务</div>
+                        <button class="login-btn" onclick="handleLogin()">登录</button>
+                    </div>
+
+                    <div id="userSection" class="user-section" style="display: none;">
+                        <img class="avatar" id="userAvatar" src="" alt="头像" />
+                        <div class="user-info">
+                            <div class="nickname" id="userNickname"></div>
+                            <div class="role" id="userRole">普通用户</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-list">
+                        <div class="menu-item" onclick="navigateTo('history')">
+                            <span class="menu-icon">📝</span>
+                            <span class="menu-text">对话历史</span>
+                            <span class="menu-arrow">›</span>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <span class="menu-icon">⚙️</span>
+                            <span class="menu-text">设置</span>
+                            <span class="menu-arrow">›</span>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <span class="menu-icon">ℹ️</span>
+                            <span class="menu-text">关于我们</span>
+                            <span class="menu-arrow">›</span>
+                        </div>
+                    </div>
+
+                    <button id="logoutBtn" class="logout-btn" onclick="handleLogout()" style="display: none;">退出登录</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航栏 -->
+        <div class="tab-bar">
+            <div class="tab-item active" onclick="navigateTo('index')">
+                <div class="tab-icon">🏠</div>
+                <div class="tab-text">首页</div>
+            </div>
+            <div class="tab-item" onclick="navigateTo('chat')">
+                <div class="tab-icon">💬</div>
+                <div class="tab-text">AI助手</div>
+            </div>
+            <div class="tab-item" onclick="navigateTo('history')">
+                <div class="tab-icon">📝</div>
+                <div class="tab-text">历史</div>
+            </div>
+            <div class="tab-item" onclick="navigateTo('profile')">
+                <div class="tab-icon">👤</div>
+                <div class="tab-text">我的</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
