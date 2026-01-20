@@ -18,7 +18,7 @@ class InternalResource(Base):
     content = Column(Text)
     keywords = Column(ARRAY(String))  # 关键词数组
     file_url = Column(String(500))
-    metadata = Column(JSONB)  # 存储额外信息
+    extra_data = Column(JSONB)  # 存储额外信息（避免使用metadata保留字）
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     def __repr__(self):

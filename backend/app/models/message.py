@@ -35,7 +35,7 @@ class Message(Base):
     role = Column(Enum(MessageRole), nullable=False)
     content = Column(Text, nullable=False)
     source = Column(Enum(MessageSource))
-    metadata = Column(JSONB)  # 存储额外信息
+    extra_data = Column(JSONB)  # 存储额外信息（避免使用metadata保留字）
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # 关系

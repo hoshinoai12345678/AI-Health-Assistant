@@ -364,7 +364,7 @@ SECRET_KEY=your_secret_key
 ```
 
 ## 部署规范
-
+部署相关的改动，每次修改之后同步改部署脚本
 ### Docker部署
 - 使用docker-compose编排
 - 环境变量通过.env文件管理

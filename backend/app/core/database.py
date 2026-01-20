@@ -2,9 +2,12 @@
 数据库连接池优化配置
 """
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.config import settings
 
+
+# 创建声明式基类
+Base = declarative_base()
 
 # 创建异步引擎（优化连接池配置）
 engine = create_async_engine(
