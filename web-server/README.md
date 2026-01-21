@@ -2,20 +2,21 @@
 
 ## 项目简介
 
-AI大健康助手的Web服务器版本，提供与微信小程序相同的功能和界面体验。用户可以通过浏览器访问，无需安装小程序。
+AI大健康助手的Web服务器版本，提供四端分离的专业界面（教师端、学生端、家长端、主管部门端）。用户可以通过浏览器访问，无需安装小程序。
 
 ## 主要特性
 
-- ✅ **完整功能**: AI健康咨询、对话历史、个人中心
+- ✅ **四端分离**: 教师、学生、家长、主管部门各有专属界面和功能
+- ✅ **AI健康咨询**: 智能对话、体测分析、训练方案
+- ✅ **数据管理**: 学生体测数据上传、查询、分析
 - ✅ **响应式设计**: 支持PC端和移动端访问
 - ✅ **一键部署**: CentOS服务器自动化部署脚本
-- ✅ **API复用**: 复用后端API服务，保持数据一致性
 
 ## 技术栈
 
 - **前端**: HTML5 + CSS3 + JavaScript
 - **后端**: FastAPI + Python 3.8+
-- **数据库**: PostgreSQL
+- **数据库**: SQLite（体测数据）+ PostgreSQL（用户数据）
 - **缓存**: Redis
 - **AI服务**: 阿里云通义千问
 
@@ -26,7 +27,7 @@ AI大健康助手的Web服务器版本，提供与微信小程序相同的功能
 ### CentOS服务器（一键部署）⭐ 推荐
 
 ```bash
-cd /opt/ctz_project/web-server
+cd /root/ctz_project/web-server
 chmod +x start.sh && sudo ./start.sh
 ```
 
@@ -54,6 +55,38 @@ start.bat
 
 ---
 
+## 🎯 四端功能说明
+
+### 教师端（蓝色主题）
+- 课课练方案查询
+- 运动会方案设计
+- 班级体测分析
+- 动作库查询
+- AI智能咨询
+
+### 学生端（绿色主题）
+- 个人体测查看
+- 训练方案生成
+- 运动指导学习
+- 心理健康咨询
+- AI智能咨询
+
+### 家长端（橙色主题）
+- 孩子体测查看
+- 家庭锻炼指导
+- 健康知识学习
+- 营养指导建议
+- AI智能咨询
+
+### 主管部门端（紫色主题）
+- 数据统计查看
+- 区域分析报告
+- 学校对比分析
+- 报表导出功能
+- AI智能咨询
+
+---
+
 ## 📋 配置说明
 
 ### 默认配置
@@ -67,7 +100,7 @@ start.bat
 ### 修改配置
 
 ```bash
-vim /opt/ctz_project/web-server/.env
+vim /root/ctz_project/web-server/.env
 ```
 
 ⚠️ **生产环境请务必修改默认密码！**
@@ -78,16 +111,42 @@ vim /opt/ctz_project/web-server/.env
 
 ```bash
 # 查看服务状态
-sudo systemctl status postgresql redis
+ps aux | grep "python.*main.py"
 
 # 测试服务
 curl http://localhost:9000/health
 
 # 查看日志
-sudo journalctl -u health-web -f
+tail -f /root/ctz_project/web-server/web-server.log
 
 # 重启服务
-sudo systemctl restart health-web
+ps aux | grep "python.*main.py"
+kill <PID>
+cd /root/ctz_project/web-server
+nohup python main.py > web-server.log 2>&1 &
+```
+
+---
+
+## 📊 数据管理
+
+### 上传体测数据
+
+1. 访问 `http://服务器IP:9000/data-manager.html`
+2. 选择数据类型（学生体测数据）
+3. 上传CSV文件（确保学号为9位数字，如：092800001）
+4. 查看上传结果
+
+### 查询体测数据
+
+**按班级查询：**
+```bash
+curl "http://localhost:9000/api/fitness/class/四一班"
+```
+
+**按学号查询：**
+```bash
+curl "http://localhost:9000/api/fitness/student/092800001"
 ```
 
 ---
@@ -95,6 +154,7 @@ sudo systemctl restart health-web
 ## 📚 详细文档
 
 - [部署文档.md](./部署文档.md) - 完整的部署指南、生产环境配置、故障排查
+- [四端分离部署说明.md](./四端分离部署说明.md) - 四端功能详细说明和使用指南
 
 ---
 
@@ -109,9 +169,24 @@ A: `sudo systemctl start postgresql`
 **Q: 端口被占用？**  
 A: `sudo lsof -i :9000` 查看占用进程
 
+**Q: 学号查询返回404？**  
+A: 确保学号为9位数字格式（如：092800001），重新上传数据
+
+**Q: 表不存在错误？**  
+A: 检查数据库路径配置，确保使用绝对路径
+
 更多问题请查看 [部署文档.md](./部署文档.md)
 
 ---
 
-**最后更新**: 2026年1月19日  
-**版本**: v1.0.0
+## 🔄 版本历史
+
+| 版本 | 日期 | 更新内容 |
+|------|------|----------|
+| v2.0.0 | 2026-01-21 | 实现四端分离功能，修复数据库路径问题，修复学号格式问题 |
+| v1.0.0 | 2026-01-19 | 初始版本发布 |
+
+---
+
+**最后更新**: 2026年1月21日  
+**版本**: v2.0.0

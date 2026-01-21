@@ -9,7 +9,7 @@ from typing import Optional, List
 from datetime import datetime
 
 from app.core.database import get_db
-from app.core.security import verify_token
+from app.core.security import get_current_user_optional
 from app.models.user import User
 from app.models.conversation import Conversation
 from app.models.message import Message, MessageRole, MessageSource
@@ -19,7 +19,7 @@ from app.services.resource_service import resource_service
 from app.services.safety_service import safety_service
 from app.services.fitness_service import fitness_service
 
-router = APIRouter(prefix="/chat", tags=["对话"])
+router = APIRouter()
 
 
 class ChatRequest(BaseModel):
@@ -30,9 +30,9 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     """对话响应"""
-    message: str
+    reply: str
     source: str
-    conversation_id: int
+    conversation_id: Optional[int] = None
     has_risk: bool = False
     risk_warning: Optional[str] = None
 
@@ -40,46 +40,39 @@ class ChatResponse(BaseModel):
 @router.post("/send", response_model=ChatResponse)
 async def send_message(
     request: ChatRequest,
-    token: str,
+    current_user: Optional[dict] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db)
 ):
     """
     发送消息
     
     流程：
-    1. 验证用户身份
+    1. 验证用户身份（可选，未登录也可以使用）
     2. 安全检查（风险检测、内容过滤）
     3. 关键词识别
     4. 资源检索或AI生成
-    5. 保存对话记录
+    5. 保存对话记录（仅登录用户）
     6. 返回响应
     """
-    # 1. 验证token
-    payload = verify_token(token)
-    if not payload:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="无效的token"
-        )
-    
-    user_id = payload.get("user_id")
-    user_role = payload.get("role", "student")
+    # 获取用户信息（如果已登录）
+    user_id = current_user.get("user_id") if current_user else None
+    user_role = current_user.get("role", "student") if current_user else "student"
     
     # 2. 安全检查 - 排除内容
     excluded_check = safety_service.check_excluded(request.message)
     if excluded_check['is_excluded']:
         return ChatResponse(
-            message=excluded_check['message'],
+            reply=excluded_check['message'],
             source='system',
-            conversation_id=request.conversation_id or 0,
+            conversation_id=request.conversation_id,
             has_risk=False
         )
     
     # 3. 安全检查 - 风险检测
     risk_check = safety_service.check_risk(request.message)
     
-    # 4. 关键词识别
-    keyword_result = keyword_service.detect_keywords(request.message)
+    # 4. 关键词识别（注意：这是异步函数，需要 await）
+    keyword_result = await keyword_service.detect_keywords(request.message)
     
     response_message = ""
     message_source = "ai"
@@ -135,41 +128,43 @@ async def send_message(
         response_message = risk_check['warning'] + "\n\n" + response_message
         risk_warning = risk_check['warning']
     
-    # 7. 保存对话记录
+    # 7. 保存对话记录（仅登录用户）
     conversation_id = request.conversation_id
     
-    if not conversation_id:
-        # 创建新对话
-        conversation = Conversation(
-            user_id=user_id,
-            title=request.message[:50]  # 使用前50个字符作为标题
+    if user_id:
+        # 已登录用户，保存对话记录
+        if not conversation_id:
+            # 创建新对话
+            conversation = Conversation(
+                user_id=user_id,
+                title=request.message[:50]  # 使用前50个字符作为标题
+            )
+            db.add(conversation)
+            await db.flush()
+            conversation_id = conversation.id
+        
+        # 保存用户消息
+        user_message = Message(
+            conversation_id=conversation_id,
+            role=MessageRole.USER,
+            content=request.message
         )
-        db.add(conversation)
-        await db.flush()
-        conversation_id = conversation.id
-    
-    # 保存用户消息
-    user_message = Message(
-        conversation_id=conversation_id,
-        role=MessageRole.USER,
-        content=request.message
-    )
-    db.add(user_message)
-    
-    # 保存AI回复
-    ai_message = Message(
-        conversation_id=conversation_id,
-        role=MessageRole.ASSISTANT,
-        content=response_message,
-        source=MessageSource.INTERNAL if message_source == "internal" else MessageSource.INTERNET
-    )
-    db.add(ai_message)
-    
-    await db.commit()
+        db.add(user_message)
+        
+        # 保存AI回复
+        ai_message = Message(
+            conversation_id=conversation_id,
+            role=MessageRole.ASSISTANT,
+            content=response_message,
+            source=MessageSource.INTERNAL if message_source == "internal" else MessageSource.INTERNET
+        )
+        db.add(ai_message)
+        
+        await db.commit()
     
     # 8. 返回响应
     return ChatResponse(
-        message=response_message,
+        reply=response_message,
         source=message_source,
         conversation_id=conversation_id,
         has_risk=risk_check['has_risk'],
@@ -180,18 +175,10 @@ async def send_message(
 @router.get("/history/{conversation_id}")
 async def get_conversation_history(
     conversation_id: int,
-    token: str,
+    current_user: Optional[dict] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db)
 ):
     """获取对话历史"""
-    # 验证token
-    payload = verify_token(token)
-    if not payload:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="无效的token"
-        )
-    
     # 获取消息列表
     result = await db.execute(
         select(Message)

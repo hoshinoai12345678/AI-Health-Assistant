@@ -5,72 +5,294 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI大健康助手</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/data-styles.css">
 </head>
 <body>
     <div class="app-container">
         <!-- 主内容区 -->
         <div id="main-content">
-            <!-- 首页 -->
-            <div id="page-index" class="page active">
-                <div class="container">
-                    <div class="header">
-                        <div class="title">AI大健康助手</div>
-                        <div class="subtitle">您的专属健康管理专家</div>
+            <!-- 角色选择页 -->
+            <div id="page-role-select" class="page active">
+                <div class="role-select-container">
+                    <div class="role-select-header">
+                        <h1 class="role-select-title">AI大健康助手</h1>
+                        <p class="role-select-subtitle">请选择您的身份</p>
                     </div>
-
-                    <div class="features">
-                        <div class="feature-card" onclick="navigateTo('chat')">
-                            <div class="feature-icon">💬</div>
-                            <div class="feature-title">AI咨询</div>
-                            <div class="feature-desc">智能健康问答</div>
-                        </div>
-
-                        <div class="feature-card">
-                            <div class="feature-icon">📋</div>
-                            <div class="feature-title">训练方案</div>
-                            <div class="feature-desc">个性化训练计划</div>
-                        </div>
-
-                        <div class="feature-card">
-                            <div class="feature-icon">📊</div>
-                            <div class="feature-title">体测分析</div>
-                            <div class="feature-desc">体测数据分析</div>
-                        </div>
-
-                        <div class="feature-card">
-                            <div class="feature-icon">📚</div>
-                            <div class="feature-title">健康知识</div>
-                            <div class="feature-desc">运动营养心理</div>
-                        </div>
-                    </div>
-
-                    <div class="quick-access">
-                        <div class="section-title">快捷入口</div>
-                        <div class="access-list">
-                            <div class="access-item">
-                                <span class="access-icon">🏃</span>
-                                <span class="access-text">运动指导</span>
+                    
+                    <div class="role-grid">
+                        <div class="role-card" onclick="selectRole('teacher')" style="border-color: #1890ff;">
+                            <div class="role-icon" style="background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);">👨‍🏫</div>
+                            <div class="role-name">教师</div>
+                            <div class="role-desc">AI助教服务、课课练方案</div>
+                            <div class="role-features">
+                                <span class="feature-tag">课课练</span>
+                                <span class="feature-tag">运动会</span>
+                                <span class="feature-tag">体测分析</span>
                             </div>
-                            <div class="access-item">
-                                <span class="access-icon">🥗</span>
-                                <span class="access-text">营养建议</span>
+                        </div>
+                        
+                        <div class="role-card" onclick="selectRole('student')" style="border-color: #52c41a;">
+                            <div class="role-icon" style="background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);">🎓</div>
+                            <div class="role-name">学生</div>
+                            <div class="role-desc">个性化训练、健康指导</div>
+                            <div class="role-features">
+                                <span class="feature-tag">体测查看</span>
+                                <span class="feature-tag">训练方案</span>
+                                <span class="feature-tag">运动指导</span>
                             </div>
-                            <div class="access-item">
-                                <span class="access-icon">💪</span>
-                                <span class="access-text">体能训练</span>
+                        </div>
+                        
+                        <div class="role-card" onclick="selectRole('parent')" style="border-color: #fa8c16;">
+                            <div class="role-icon" style="background: linear-gradient(135deg, #fa8c16 0%, #d46b08 100%);">👨‍👩‍👧</div>
+                            <div class="role-name">家长</div>
+                            <div class="role-desc">家庭健康教育、育儿指导</div>
+                            <div class="role-features">
+                                <span class="feature-tag">孩子体测</span>
+                                <span class="feature-tag">家庭锻炼</span>
+                                <span class="feature-tag">健康知识</span>
                             </div>
-                            <div class="access-item">
-                                <span class="access-icon">🧘</span>
-                                <span class="access-text">心理健康</span>
+                        </div>
+                        
+                        <div class="role-card" onclick="selectRole('admin')" style="border-color: #722ed1;">
+                            <div class="role-icon" style="background: linear-gradient(135deg, #722ed1 0%, #531dab 100%);">📊</div>
+                            <div class="role-name">主管部门</div>
+                            <div class="role-desc">数据分析、决策支持</div>
+                            <div class="role-features">
+                                <span class="feature-tag">数据统计</span>
+                                <span class="feature-tag">区域分析</span>
+                                <span class="feature-tag">报表导出</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 聊天页 -->
+            <!-- 教师端首页 -->
+            <div id="page-teacher-home" class="page">
+                <div class="container">
+                    <div class="role-header" style="background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);">
+                        <div class="role-header-icon">👨‍🏫</div>
+                        <div class="role-header-text">
+                            <div class="role-header-title">教师工作台</div>
+                            <div class="role-header-subtitle">AI助教服务</div>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">📚</div>
+                            <div class="feature-title-large">课课练方案</div>
+                            <div class="feature-desc-large">获取各类身体素质训练方案</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🏃</div>
+                            <div class="feature-title-large">运动会设计</div>
+                            <div class="feature-desc-large">全员运动会方案定制</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">📊</div>
+                            <div class="feature-title-large">班级体测分析</div>
+                            <div class="feature-desc-large">查看班级体测数据和改进建议</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">💪</div>
+                            <div class="feature-title-large">动作库查询</div>
+                            <div class="feature-desc-large">查找各类训练动作和视频</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🤖</div>
+                            <div class="feature-title-large">AI咨询</div>
+                            <div class="feature-desc-large">智能问答，随时解答疑问</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-tips">
+                        <div class="tips-title">💡 快速提示</div>
+                        <div class="tips-list">
+                            <div class="tip-item">• 试试问："我想要一套平衡能力课课练方案"</div>
+                            <div class="tip-item">• 试试问："帮我设计一个全员运动会方案"</div>
+                            <div class="tip-item">• 试试问："四一班体测成绩分析"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学生端首页 -->
+            <div id="page-student-home" class="page">
+                <div class="container">
+                    <div class="role-header" style="background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);">
+                        <div class="role-header-icon">🎓</div>
+                        <div class="role-header-text">
+                            <div class="role-header-title">学生健康中心</div>
+                            <div class="role-header-subtitle">科学锻炼，健康成长</div>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">📋</div>
+                            <div class="feature-title-large">我的体测</div>
+                            <div class="feature-desc-large">查看个人体测成绩和分析</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🏋️</div>
+                            <div class="feature-title-large">训练方案</div>
+                            <div class="feature-desc-large">获取个性化训练计划</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🏃‍♂️</div>
+                            <div class="feature-title-large">运动指导</div>
+                            <div class="feature-desc-large">学习正确的运动方法</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">😊</div>
+                            <div class="feature-title-large">心理健康</div>
+                            <div class="feature-desc-large">心理调节和压力管理</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🤖</div>
+                            <div class="feature-title-large">AI咨询</div>
+                            <div class="feature-desc-large">随时提问，智能解答</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-tips">
+                        <div class="tips-title">💡 快速提示</div>
+                        <div class="tips-list">
+                            <div class="tip-item">• 试试问："我的体测成绩怎么样？"</div>
+                            <div class="tip-item">• 试试问："如何提高50米跑成绩？"</div>
+                            <div class="tip-item">• 试试问："最近学习压力大怎么办？"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 家长端首页 -->
+            <div id="page-parent-home" class="page">
+                <div class="container">
+                    <div class="role-header" style="background: linear-gradient(135deg, #fa8c16 0%, #d46b08 100%);">
+                        <div class="role-header-icon">👨‍👩‍👧</div>
+                        <div class="role-header-text">
+                            <div class="role-header-title">家长服务中心</div>
+                            <div class="role-header-subtitle">陪伴成长，守护健康</div>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">👶</div>
+                            <div class="feature-title-large">孩子体测</div>
+                            <div class="feature-desc-large">查看孩子体测成绩和建议</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🏠</div>
+                            <div class="feature-title-large">家庭锻炼</div>
+                            <div class="feature-desc-large">适合家庭的运动指导</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">📖</div>
+                            <div class="feature-title-large">健康知识</div>
+                            <div class="feature-desc-large">儿童健康科普和育儿知识</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🥗</div>
+                            <div class="feature-title-large">营养指导</div>
+                            <div class="feature-desc-large">儿童饮食营养建议</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🤖</div>
+                            <div class="feature-title-large">AI咨询</div>
+                            <div class="feature-desc-large">育儿问题，随时解答</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-tips">
+                        <div class="tips-title">💡 快速提示</div>
+                        <div class="tips-list">
+                            <div class="tip-item">• 试试问："孩子10岁，如何安排运动？"</div>
+                            <div class="tip-item">• 试试问："孩子不爱运动怎么办？"</div>
+                            <div class="tip-item">• 试试问："儿童营养餐怎么搭配？"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主管部门端首页 -->
+            <div id="page-admin-home" class="page">
+                <div class="container">
+                    <div class="role-header" style="background: linear-gradient(135deg, #722ed1 0%, #531dab 100%);">
+                        <div class="role-header-icon">📊</div>
+                        <div class="role-header-text">
+                            <div class="role-header-title">数据分析中心</div>
+                            <div class="role-header-subtitle">数据驱动，科学决策</div>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">📈</div>
+                            <div class="feature-title-large">数据统计</div>
+                            <div class="feature-desc-large">查看各类统计数据和趋势</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🗺️</div>
+                            <div class="feature-title-large">区域分析</div>
+                            <div class="feature-desc-large">区域健康数据对比分析</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🏫</div>
+                            <div class="feature-title-large">学校对比</div>
+                            <div class="feature-desc-large">学校间数据对比和排名</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">📄</div>
+                            <div class="feature-title-large">报表导出</div>
+                            <div class="feature-desc-large">生成和导出各类报表</div>
+                        </div>
+
+                        <div class="feature-card-large" onclick="navigateTo('chat')">
+                            <div class="feature-icon-large">🤖</div>
+                            <div class="feature-title-large">AI咨询</div>
+                            <div class="feature-desc-large">数据解读，决策建议</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-tips">
+                        <div class="tips-title">💡 快速提示</div>
+                        <div class="tips-list">
+                            <div class="tip-item">• 试试问："本区学生体测平均分是多少？"</div>
+                            <div class="tip-item">• 试试问："各学校体测成绩对比"</div>
+                            <div class="tip-item">• 试试问："生成本月数据分析报告"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 聊天页（通用） -->
             <div id="page-chat" class="page">
                 <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-header-left">
+                            <span id="chatRoleIcon">🤖</span>
+                            <span id="chatRoleText">AI助手</span>
+                        </div>
+                        <button class="back-btn" onclick="history.back()">返回</button>
+                    </div>
                     <div class="message-list" id="messageList"></div>
                     <div class="input-bar">
                         <input 
@@ -85,18 +307,29 @@
                 </div>
             </div>
 
-            <!-- 历史页 -->
+            <!-- 历史页（通用） -->
             <div id="page-history" class="page">
                 <div class="container">
+                    <div class="page-header">
+                        <h2>对话历史</h2>
+                    </div>
                     <div id="historyContent">
                         <div class="loading">加载中...</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 个人中心页 -->
+            <!-- 个人中心页（通用） -->
             <div id="page-profile" class="page">
                 <div class="container">
+                    <div class="profile-header">
+                        <div class="current-role">
+                            <div class="current-role-icon" id="currentRoleIcon">👤</div>
+                            <div class="current-role-name" id="currentRoleName">未选择角色</div>
+                        </div>
+                        <button class="change-role-btn" onclick="changeRole()">切换角色</button>
+                    </div>
+
                     <div id="loginSection" class="login-section">
                         <div class="avatar-placeholder">👤</div>
                         <div class="login-tip">登录后享受更多服务</div>
@@ -134,23 +367,143 @@
                     <button id="logoutBtn" class="logout-btn" onclick="handleLogout()" style="display: none;">退出登录</button>
                 </div>
             </div>
+
+            <!-- 教师端数据管理页面 -->
+            <div id="page-teacher-data" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <h2>📁 数据管理</h2>
+                        <p>上传和管理体测数据、动作库</p>
+                    </div>
+
+                    <div class="data-management-section">
+                        <div class="upload-card">
+                            <div class="upload-icon">📊</div>
+                            <h3>体测数据上传</h3>
+                            <p>上传班级学生体测数据（Excel格式）</p>
+                            <button class="btn-primary" onclick="handleFileUpload('fitness')">
+                                <span>📤</span> 选择文件上传
+                            </button>
+                            <div class="upload-tips">
+                                <small>支持格式：.xlsx, .xls, .csv</small>
+                            </div>
+                        </div>
+
+                        <div class="upload-card">
+                            <div class="upload-icon">💪</div>
+                            <h3>动作库上传</h3>
+                            <p>上传体育训练动作库（Excel格式）</p>
+                            <button class="btn-primary" onclick="handleFileUpload('exercises')">
+                                <span>📤</span> 选择文件上传
+                            </button>
+                            <div class="upload-tips">
+                                <small>支持格式：.xlsx, .xls, .csv</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="query-section">
+                        <h3>数据查询</h3>
+                        <div class="query-buttons">
+                            <button class="btn-secondary" onclick="queryStudentData()">
+                                <span>👤</span> 查询学生数据
+                            </button>
+                            <button class="btn-secondary" onclick="queryClassData()">
+                                <span>👥</span> 查询班级数据
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学生端查询页面 -->
+            <div id="page-student-query" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <h2>📋 我的体测</h2>
+                        <p>查看个人体测成绩和训练建议</p>
+                    </div>
+
+                    <div class="query-form">
+                        <div class="form-group">
+                            <label>学号</label>
+                            <input type="text" id="student-id-input" placeholder="请输入学号" class="form-input">
+                        </div>
+                        <button class="btn-primary btn-block" onclick="queryStudentDataByInput()">
+                            <span>🔍</span> 查询我的数据
+                        </button>
+                    </div>
+
+                    <div id="student-data-container" class="data-container"></div>
+                </div>
+            </div>
+
+            <!-- 家长端查询页面 -->
+            <div id="page-parent-query" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <h2>👶 孩子体测</h2>
+                        <p>查看孩子的体测成绩和成长建议</p>
+                    </div>
+
+                    <div class="query-form">
+                        <div class="form-group">
+                            <label>孩子学号</label>
+                            <input type="text" id="child-id-input" placeholder="请输入孩子的学号" class="form-input">
+                        </div>
+                        <button class="btn-primary btn-block" onclick="queryChildData()">
+                            <span>🔍</span> 查询孩子数据
+                        </button>
+                    </div>
+
+                    <div id="child-data-container" class="data-container"></div>
+                </div>
+            </div>
+
+            <!-- 督导端数据统计页面 -->
+            <div id="page-admin-data" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <h2>📊 数据统计</h2>
+                        <p>查看跨班级、跨学校数据统计</p>
+                    </div>
+
+                    <div class="query-form">
+                        <div class="form-group">
+                            <label>班级名称</label>
+                            <input type="text" id="admin-class-input" placeholder="请输入班级名称" class="form-input">
+                        </div>
+                        <button class="btn-primary btn-block" onclick="queryClassDataByAdmin()">
+                            <span>🔍</span> 查询班级统计
+                        </button>
+                    </div>
+
+                    <div id="admin-data-container" class="data-container"></div>
+                </div>
+            </div>
+
+            <!-- 加载提示 -->
+            <div id="loading-overlay" class="loading-overlay" style="display: none;">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">加载中...</div>
+            </div>
         </div>
 
         <!-- 底部导航栏 -->
         <div class="tab-bar">
-            <div class="tab-item active" onclick="navigateTo('index')">
+            <div class="tab-item" data-page="home" onclick="navigateToHome()">
                 <div class="tab-icon">🏠</div>
                 <div class="tab-text">首页</div>
             </div>
-            <div class="tab-item" onclick="navigateTo('chat')">
+            <div class="tab-item" data-page="chat" onclick="navigateTo('chat')">
                 <div class="tab-icon">💬</div>
                 <div class="tab-text">AI助手</div>
             </div>
-            <div class="tab-item" onclick="navigateTo('history')">
-                <div class="tab-icon">📝</div>
-                <div class="tab-text">历史</div>
+            <div class="tab-item" data-page="data" onclick="navigateToData()">
+                <div class="tab-icon">📊</div>
+                <div class="tab-text">数据</div>
             </div>
-            <div class="tab-item" onclick="navigateTo('profile')">
+            <div class="tab-item" data-page="profile" onclick="navigateTo('profile')">
                 <div class="tab-icon">👤</div>
                 <div class="tab-text">我的</div>
             </div>
@@ -158,5 +511,6 @@
     </div>
 
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/data-manager.js"></script>
 </body>
 </html>

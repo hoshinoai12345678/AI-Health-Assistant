@@ -10,11 +10,15 @@ from fastapi.responses import HTMLResponse
 import sys
 import os
 
-# 添加后端路径到系统路径
+# 设置数据库路径（使用绝对路径）
 backend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'backend')
+db_path = os.path.join(backend_path, 'ctz_data.db')
+os.environ['DATABASE_URL'] = f'sqlite:///{db_path}'
+
+# 添加后端路径到系统路径
 sys.path.insert(0, backend_path)
 
-from app.api import auth, chat, conversation, fitness
+from app.api import auth, chat, conversation, fitness, data_upload
 from app.core.config import settings
 from app.middleware.security import (
     RateLimitMiddleware,
@@ -75,6 +79,11 @@ app.include_router(
     fitness.router, 
     prefix="/api/fitness", 
     tags=["体测分析"]
+)
+app.include_router(
+    data_upload.router,
+    prefix="/api/data",
+    tags=["数据管理"]
 )
 
 

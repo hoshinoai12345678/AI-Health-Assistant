@@ -1,0 +1,312 @@
+<!-- 教师端数据管理页面 -->
+<div id="page-teacher-data" class="page">
+    <div class="container">
+        <div class="page-header">
+            <h2>📁 数据管理</h2>
+            <p>上传和管理体测数据、动作库</p>
+        </div>
+
+        <div class="data-management-section">
+            <div class="upload-card">
+                <div class="upload-icon">📊</div>
+                <h3>体测数据上传</h3>
+                <p>上传班级学生体测数据（Excel格式）</p>
+                <button class="btn-primary" onclick="handleFileUpload('fitness')">
+                    <span>📤</span> 选择文件上传
+                </button>
+                <div class="upload-tips">
+                    <small>支持格式：.xlsx, .xls, .csv</small>
+                </div>
+            </div>
+
+            <div class="upload-card">
+                <div class="upload-icon">💪</div>
+                <h3>动作库上传</h3>
+                <p>上传体育训练动作库（Excel格式）</p>
+                <button class="btn-primary" onclick="handleFileUpload('exercises')">
+                    <span>📤</span> 选择文件上传
+                </button>
+                <div class="upload-tips">
+                    <small>支持格式：.xlsx, .xls, .csv</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="query-section">
+            <h3>数据查询</h3>
+            <div class="query-buttons">
+                <button class="btn-secondary" onclick="queryStudentData()">
+                    <span>👤</span> 查询学生数据
+                </button>
+                <button class="btn-secondary" onclick="queryClassData()">
+                    <span>👥</span> 查询班级数据
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 学生端查询页面 -->
+<div id="page-student-query" class="page">
+    <div class="container">
+        <div class="page-header">
+            <h2>📋 我的体测</h2>
+            <p>查看个人体测成绩和训练建议</p>
+        </div>
+
+        <div class="query-form">
+            <div class="form-group">
+                <label>学号</label>
+                <input type="text" id="student-id-input" placeholder="请输入学号" class="form-input">
+            </div>
+            <button class="btn-primary btn-block" onclick="queryStudentDataByInput()">
+                <span>🔍</span> 查询我的数据
+            </button>
+        </div>
+
+        <div id="student-data-container" class="data-container"></div>
+    </div>
+</div>
+
+<!-- 家长端查询页面 -->
+<div id="page-parent-query" class="page">
+    <div class="container">
+        <div class="page-header">
+            <h2>👶 孩子体测</h2>
+            <p>查看孩子的体测成绩和成长建议</p>
+        </div>
+
+        <div class="query-form">
+            <div class="form-group">
+                <label>孩子学号</label>
+                <input type="text" id="child-id-input" placeholder="请输入孩子的学号" class="form-input">
+            </div>
+            <button class="btn-primary btn-block" onclick="queryChildData()">
+                <span>🔍</span> 查询孩子数据
+            </button>
+        </div>
+
+        <div id="child-data-container" class="data-container"></div>
+    </div>
+</div>
+
+<!-- 加载提示 -->
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">加载中...</div>
+</div>
+
+<!-- 底部导航栏 -->
+<div class="tab-bar">
+    <div class="tab-item" data-page="home" onclick="navigateToHome()">
+        <div class="tab-icon">🏠</div>
+        <div class="tab-label">首页</div>
+    </div>
+    <div class="tab-item" data-page="chat" onclick="navigateTo('chat')">
+        <div class="tab-icon">💬</div>
+        <div class="tab-label">AI助手</div>
+    </div>
+    <div class="tab-item" data-page="data" onclick="navigateToData()">
+        <div class="tab-icon">📊</div>
+        <div class="tab-label">数据</div>
+    </div>
+    <div class="tab-item" data-page="profile" onclick="navigateTo('profile')">
+        <div class="tab-icon">👤</div>
+        <div class="tab-label">我的</div>
+    </div>
+</div>
+
+<script>
+// 导航到首页
+function navigateToHome() {
+    if (currentRole) {
+        navigateTo(`${currentRole}-home`);
+    } else {
+        navigateTo('role-select');
+    }
+}
+
+// 导航到数据页面
+function navigateToData() {
+    if (currentRole === 'teacher') {
+        navigateTo('teacher-data');
+    } else if (currentRole === 'student') {
+        navigateTo('student-query');
+    } else if (currentRole === 'parent') {
+        navigateTo('parent-query');
+    } else {
+        navigateTo('role-select');
+    }
+}
+
+// 通过输入框查询学生数据
+async function queryStudentDataByInput() {
+    const input = document.getElementById('student-id-input');
+    const studentId = input.value.trim();
+    
+    if (!studentId) {
+        showToast('请输入学号', 'warning');
+        return;
+    }
+    
+    const data = await getStudentData(studentId);
+    if (data) {
+        displayStudentDataInContainer(data, 'student-data-container');
+        
+        // 获取训练推荐
+        const recommendations = await getExerciseRecommendations(studentId);
+        if (recommendations) {
+            displayExerciseRecommendationsInContainer(recommendations, 'student-data-container');
+        }
+    }
+}
+
+// 查询孩子数据
+async function queryChildData() {
+    const input = document.getElementById('child-id-input');
+    const studentId = input.value.trim();
+    
+    if (!studentId) {
+        showToast('请输入孩子的学号', 'warning');
+        return;
+    }
+    
+    const data = await getStudentData(studentId);
+    if (data) {
+        displayStudentDataInContainer(data, 'child-data-container');
+        
+        // 获取训练推荐
+        const recommendations = await getExerciseRecommendations(studentId);
+        if (recommendations) {
+            displayExerciseRecommendationsInContainer(recommendations, 'child-data-container');
+        }
+    }
+}
+
+// 在容器中显示学生数据
+function displayStudentDataInContainer(data, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="data-card">
+            <div class="data-header">
+                <h4>基本信息</h4>
+            </div>
+            <div class="data-content">
+                <div class="data-item">
+                    <span class="label">学号：</span>
+                    <span class="value">${data.student_id}</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">年级：</span>
+                    <span class="value">${data.grade}</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">班级：</span>
+                    <span class="value">${data.class}</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">性别：</span>
+                    <span class="value">${data.gender}</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">身高：</span>
+                    <span class="value">${data.basic_info.height} cm</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">体重：</span>
+                    <span class="value">${data.basic_info.weight} kg (${data.basic_info.weight_level})</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="data-card">
+            <div class="data-header">
+                <h4>体测成绩</h4>
+            </div>
+            <div class="data-content">
+                ${renderTestItem('肺活量', data.test_results.lung_capacity)}
+                ${renderTestItem('50米跑', data.test_results.run_50m)}
+                ${renderTestItem('坐位体前屈', data.test_results.sit_reach)}
+                ${renderTestItem('仰卧起坐', data.test_results.sit_up)}
+                ${renderTestItem('跳绳', data.test_results.rope_skip)}
+                ${renderTestItem('立定跳远', data.test_results.standing_jump)}
+            </div>
+        </div>
+        
+        <div class="data-card">
+            <div class="data-header">
+                <h4>总分</h4>
+            </div>
+            <div class="data-content">
+                <div class="score-summary">
+                    <div class="score-item">
+                        <div class="score-label">标准分</div>
+                        <div class="score-value">${data.total.standard_score}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">附加分</div>
+                        <div class="score-value">${data.total.bonus_score}</div>
+                    </div>
+                    <div class="score-item highlight">
+                        <div class="score-label">总分</div>
+                        <div class="score-value">${data.total.total_score}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">等级</div>
+                        <div class="score-value level-${data.total.level}">${data.total.level}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="recommendations-${containerId}"></div>
+    `;
+}
+
+// 在容器中显示训练推荐
+function displayExerciseRecommendationsInContainer(data, containerId) {
+    const container = document.getElementById(`recommendations-${containerId}`);
+    if (!container) return;
+    
+    let html = '<div class="data-card"><div class="data-header"><h4>训练建议</h4></div><div class="data-content">';
+    
+    if (data.weak_items && data.weak_items.length > 0) {
+        html += `
+            <div class="weak-items">
+                <p><strong>需要加强的项目：</strong></p>
+                <div class="weak-tags">
+                    ${data.weak_items.map(item => `<span class="weak-tag">${item}</span>`).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    if (data.recommended_exercises && data.recommended_exercises.length > 0) {
+        html += '<div class="exercise-list">';
+        data.recommended_exercises.forEach(ex => {
+            html += `
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <h5>${ex.name}</h5>
+                        <span class="difficulty-badge">${ex.difficulty}</span>
+                    </div>
+                    <div class="exercise-body">
+                        <p>${ex.description.substring(0, 100)}...</p>
+                        <div class="exercise-tags">
+                            <span class="tag">提升：${ex.improve_test}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    } else {
+        html += '<p class="no-data">暂无推荐动作</p>';
+    }
+    
+    html += '</div></div>';
+    container.innerHTML = html;
+}
+</script>

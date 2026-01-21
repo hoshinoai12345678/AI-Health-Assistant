@@ -3,9 +3,10 @@ FastAPI主应用（优化版）
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, chat, conversation, fitness
+from app.api import auth, chat, conversation, fitness, data_upload
 from app.core.config import settings
 from app.core.cache import cache_manager
+from app.core.database import init_db
 from app.middleware.security import (
     RateLimitMiddleware,
     SecurityHeadersMiddleware,
@@ -56,6 +57,11 @@ app.include_router(
     prefix="/api/fitness", 
     tags=["体测分析"]
 )
+app.include_router(
+    data_upload.router, 
+    prefix="/api/data", 
+    tags=["数据管理"]
+)
 
 
 @app.get("/")
@@ -77,6 +83,8 @@ async def health_check():
 @app.on_event("startup")
 async def startup_event():
     """应用启动事件"""
+    # 初始化数据库
+    init_db()
     await cache_manager.connect()
     logging.info("应用启动完成")
 

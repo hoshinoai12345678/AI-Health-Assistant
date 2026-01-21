@@ -23,6 +23,12 @@ hiredis==2.3.2
 openai==1.10.0
 dashscope==1.14.0
 
+# 数据处理（重要：版本必须兼容）
+numpy==1.24.3
+pandas==2.0.3
+openpyxl==3.1.2
+xlrd==2.0.1
+
 # 工具库
 pydantic==2.5.3
 pydantic-settings==2.1.0
